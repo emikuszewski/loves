@@ -1,0 +1,9 @@
+---
+applications:
+- name: loves
+  memory: 64M
+  instances: 1
+  host: loves
+  domain: cfapps.io
+  path: public
+  buildpack: staticfile_buildpack
