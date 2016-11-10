@@ -5,7 +5,7 @@
        $ cd loves
        $ hugo --theme=material-design
        $ touch public/Staticfile
-       $ cf push
+       $ cf push -n loves
 
 Make sure you commit all your changes back to the git repo.
 
