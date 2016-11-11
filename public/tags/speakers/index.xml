@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Speakers on Cloud Foundry Meeting</title>
+    <link>http://loves.cfapps.io/tags/speakers/</link>
+    <description>Recent content in Speakers on Cloud Foundry Meeting</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© Copyright 2016 Pivotal Software, Inc. All Rights Reserved. Sitemap</copyright>
+    <lastBuildDate>Tue, 15 Mar 2016 16:23:23 +0900</lastBuildDate>
+    <atom:link href="http://loves.cfapps.io/tags/speakers/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Welcome to the Pivotal Cloud Foundry Meeting @ Loves</title>
+      <link>http://loves.cfapps.io/2016/03/15/welcome-to-the-pivotal-cloud-foundry-meeting--loves/</link>
+      <pubDate>Tue, 15 Mar 2016 16:23:23 +0900</pubDate>
+      
+      <guid>http://loves.cfapps.io/2016/03/15/welcome-to-the-pivotal-cloud-foundry-meeting--loves/</guid>
+      <description>
+
+&lt;h5 id=&#34;location&#34;&gt;Location&lt;/h5&gt;
+
+&lt;p&gt;10601 North Pennsylvania Ave - The Village -
+Oklahoma City, OK 73120&lt;/p&gt;
+
+&lt;h5 id=&#34;date-and-time&#34;&gt;Date and Time&lt;/h5&gt;
+
+&lt;p&gt;Date: &lt;strong&gt;November 16, 2016&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Time: &lt;strong&gt;2:00PM—5:00PM&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Click to get the Agenda, Prerequisites and Setup for the workshop.&lt;/p&gt;
+
+&lt;h5 id=&#34;agenda&#34;&gt;Agenda&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code&gt;    Broad Agenda
+
+    2:00 - 3:00: Build Pipelines for continuous deployment, Bosh/Ops Manager walk through and discussion on CI/CD.
+
+    3:30 - 4:30: Lessons learned and Scoping for POC - Apps, Infrastructure vSphere, Sizing, Timelines and Project Plan
+
+    4:30 and beyond : Open discussion on various topics - Spring Cloud Services, Security, APM, K8, Docker
+                      Wrap Up, Q&amp;amp;A, and Feedback
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h5&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Java SDK 1.7+&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Git CLI from &lt;a href=&#34;https://mac.github.com/&#34;&gt;github.com&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Cloud Foundry CLI for &lt;a href=&#34;https://github.com/cloudfoundry/cli/releases&#34;&gt;Mac&lt;/a&gt; or &lt;a href=&#34;http://docs.cloudfoundry.org/devguide/installcf/install-go-cli.html#windows&#34;&gt;Windows&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Curl from &lt;a href=&#34;http://curl.haxx.se/&#34;&gt;curl&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Use Workshop PCF Env or Pivotal Web Services Account.  Create a free trial account here &lt;a href=&#34;http://run.pivotal.io/&#34;&gt;Pivotal Web Services&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Maven for build (&lt;a href=&#34;https://maven.apache.org/install.html&#34;&gt;https://maven.apache.org/install.html&lt;/a&gt;)&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Vagrant (In case you want to run Concourse CI/CD using Vagrant)&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h5 id=&#34;setup&#34;&gt;Setup&lt;/h5&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Install the Prerequisites software (cf cli)&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Check if you are able to use the cf cli to connect to the PCF Workshop Env. Alternatively, you can create a PWS account and check the firewall/connectivity before the Workshop. For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  cf login -a https://api.run.pivotal.io --skip-ssl-validation
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Check if you are able to connect to Git repo and download / clone the repo using CLI&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Login to the App Manager Console. For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;https://api.run.pivotal.io
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Note: Tiles preinstalled in the PCF Workshop environment which we will be using the workshop. You don&amp;rsquo;t need any setup for these tiles.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  ER
+  Spring Cloud Services
+  RabbitMQ
+  MySQL
+  MongoDB
+  Neo4J
+  Redis
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h5 id=&#34;speakers&#34;&gt;Speakers&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code&gt;Patrick Crocker, Senior Platform Architect
+Edward Mikuszewski, Platform Architect
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;presentation&#34;&gt;Presentation&lt;/h4&gt;
+
+&lt;iframe src=&#34;https://docs.google.com/presentation/d/1wNT7il4szv25Tl0KBG4SaetQkwKwyqk_rrQfskDSLgo/embed?start=false&amp;amp;loop=false&amp;amp;delayms=3000&#34; frameborder=&#34;0&#34; width=&#34;100%&#34; height=&#34;500&#34; allowfullscreen=&#34;true&#34; mozallowfullscreen=&#34;true&#34; webkitallowfullscreen=&#34;true&#34;&gt;&lt;/iframe&gt;
+
+
+&lt;h4 id=&#34;videos&#34;&gt;Videos&lt;/h4&gt;
+
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;//www.youtube.com/embed/V75fE_dxuBQ&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&#34; allowfullscreen frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
+ &lt;/div&gt;
+
+
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;//www.youtube.com/embed/7APZD0me1nU&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&#34; allowfullscreen frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
+ &lt;/div&gt;
+
+</description>
+    </item>
+    
+  </channel>
+</rss>

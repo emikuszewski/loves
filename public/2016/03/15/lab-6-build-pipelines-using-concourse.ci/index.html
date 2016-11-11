@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+  <title>Lab 6: Build Pipelines using Concourse.ci</title>
+  <link href="http://loves.cfapps.io//css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="http://loves.cfapps.io//css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/default.min.css">
+  <style type="text/css">
+  
+    footer.page-footer{background-image: url(http://loves.cfapps.io//images/default.png);}
+  
+  </style>
+
+</head>
+<body>
+  <ul id="slide-out" class="side-nav">
+    <li><a href="http://loves.cfapps.io/"><i class="mdi-action-home left"></i>Home<i class="mdi-hardware-keyboard-arrow-right right"></i></a></li>
+    <li><a href="http://loves.cfapps.io//categories"><i class="mdi-action-perm-media left"></i>Categories<i class="mdi-hardware-keyboard-arrow-right right"></i></a></li>
+    <li><a href="http://loves.cfapps.io//tags"><i class="mdi-action-loyalty left"></i>Tags<i class="mdi-hardware-keyboard-arrow-right right"></i></a></li>
+  </ul>
+  <div id="index-banner" class="parallax-container">
+  <a data-activates="slide-out" class="btn-floating button-collapse" style="top: 5px; left: 5px;"><i class="mdi-navigation-menu"></i></a>
+
+    <div class="section no-pad-bot">
+      <div class="container">
+        <div class="row center">
+          
+          
+            <a href="http://www.loves.com/"><img src="http://loves.cfapps.io//images/loves.png" style="height:100px"></a>
+          
+          
+        </div>
+        
+        <h1 class="header center teal-text text-lighten-2">Cloud Foundry Meeting</h1>
+        <div class="row center">
+          <h5 class="header col s12 light">Pivotal Cloud Foundry</h5>
+        </div>
+        <div class="row center">
+
+        
+        
+        
+          <a href="https://twitter.com/pivotal"><img src="http://loves.cfapps.io//images/twitter-dreamstale71.png"></a>
+        
+        
+        
+          <a href="http://loves.cfapps.io//index.xml"><img src="http://loves.cfapps.io//images/feed-dreamstale27.png"></a>
+        </div>
+      </div>
+    </div>
+    <div class="parallax">
+    
+      <img src="http://loves.cfapps.io//images/default.png">
+    
+    </div>
+  </div>
+
+
+
+<div class="container">
+  <div class="section">
+
+    <div class="row">
+      <div class="col s12">
+        <div class="card-panel">
+          <h4>Lab 6: Build Pipelines using Concourse.ci</h4>
+          <p>
+          
+            
+              <a href="http://loves.cfapps.io//categories/lab/">lab</a>
+            
+           
+          </p>
+          <p>
+
+<h3 id="goal">Goal</h3>
+
+<p>In this workshop, you will learn how to Build Pipelines to for unit testing, staging and production deployment to Cloud Foundry using Concourse.ci</p>
+
+<h3 id="introduction">Introduction</h3>
+
+<p>Concourse&rsquo;s end goal is to provide an expressive CI system with as few distinct moving parts as possible.</p>
+
+<p>Concourse CI decouples your project from your CI&rsquo;s details, and keeping all configuration in declarative files that can be checked into version control.</p>
+
+<p><img src="/images/concourse-1.png" alt="Concourse CI" style="width: 100%;"/></p>
+
+<p>Concourse limits itself to three core concepts: tasks, resources, and the jobs that compose them. Interesting features like timed triggers and synchronizing usage of external environments are modeled in terms of these, rather than as layers on top.</p>
+
+<p>With these primitives you can model any pipeline, from simple (unit → integration → deploy → ship) to complex (testing on multiple infrastructures, fanning out and in, etc.).</p>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<ol>
+<li><p>Java SDK 1.7+</p></li>
+
+<li><p>Pivotal CF Env or Pivotal Web Services Account.  Create a free trial account here <a href="http://run.pivotal.io/">Pivotal Web Services</a></p></li>
+
+<li><p>Vagrant (<a href="https://vagrantup.com/">https://vagrantup.com/</a>) to run Concourse locally</p></li>
+
+<li><p>Fly cli. The fly tool is a command line interface to Concourse, it available when you bring up Concourse</p></li>
+</ol>
+
+<h2 id="steps">Steps</h2>
+
+<p>In this workshop we are going to follow these steps to use the circuit-breaker in a Cloud Native Spring Boot app on Cloud foundry using the Spring Cloud Circuit Breaker Service.</p>
+
+<p>Learn how to</p>
+
+<pre><code>- Start and Configure Concourse.CI server
+- Create a Pipeline
+- Trigger a Pipeline using Fly
+- Run a pipeline to test, stage and deploy on Cloud Foundry
+</code></pre>
+
+<hr />
+
+<h2 id="part-1-building-simple-pipelines">Part 1: Building simple Pipelines</h2>
+
+<h3 id="step-1">Step 1</h3>
+
+<h5 id="configure-your-concourse-ci-server">Configure your Concourse.CI server</h5>
+
+<p>Download the Concourse CI server and boot up using vagrant. This step will take some time, you can do this prior to the start of the workshop presentation.</p>
+
+<pre><code class="language-bash">$mkdir ciworkshop &amp;&amp; cd ciworkshop // ci workshop working directory
+$vagrant init concourse/lite # creates ./Vagrantfile
+$vagrant up                  # downloads the box and spins up the VM
+</code></pre>
+
+<p>The web server will be running at <a href="http://192.168.100.4:8080">http://192.168.100.4:8080</a></p>
+
+<p>Open up the Concourse UI web page, you don&rsquo;t have any pipelines configured. But you can download the fly cli from here. At the right hand bottom, use the links to download the <strong>fly cli</strong>.</p>
+
+<p>If you&rsquo;re on Linux or OS X, you will have to <code>chmod +x</code> the downloaded binary and put it in your $PATH</p>
+
+<p>Next, lets target and login to the Concourse server</p>
+
+<pre><code class="language-bash">$ fly -t lite login -c http://192.168.100.4:8080
+</code></pre>
+
+<h3 id="step-2">Step 2</h3>
+
+<h5 id="create-your-first-pipeline">Create your first pipeline</h5>
+
+<p>We have an existing project <code>flight-school</code> in a git repo, which we can clone and use for our first pipeline.</p>
+
+<pre><code>$git clone https://github.com/rjain-pivotal/flight-school.git
+$cd flight-school\ci
+
+</code></pre>
+
+<p>In the ci folder there is a properties file, flight-school-properties-sample.yml</p>
+
+<p>This contains the cf and git specific configuration which is read by the pipeline.</p>
+
+<p>Make a local copy of the flight-school-properties-sample.yml</p>
+
+<pre><code>mkdir ~/.concourse
+cp ci/flight-school-properties-sample.yml ~/.concourse/flight-school-properties.yml
+chmod 600 ~/.concourse/flight-school-properties.yml
+</code></pre>
+
+<p>Now edit the ~/.concourse/flight-school-properties.yml</p>
+
+<pre><code>github-uri: https://github.com/.../flight-school.git
+github-branch: master
+cf-api: https://api.local.micropcf.io
+cf-username: admin
+cf-password: admin
+cf-org: micropcf-org
+cf-space: micropcf-space
+cf-manifest-host: pcfdemo-ci
+
+</code></pre>
+
+<p>Review your pipeline file in the ci folder\pipeline.yml</p>
+
+<pre><code>resources:
+- name: flight-school
+  type: git
+  source:
+      uri: {{github-uri}}
+      branch: {{github-branch}}
+- name: staging-app
+  type: cf
+  source:
+      api: {{cf-api}}
+      username: {{cf-username}}
+      password: {{cf-password}}
+      organization: {{cf-org}}
+      space: {{cf-space}}
+      skip_cert_check: true
+
+jobs:
+- name: test-app
+  plan:
+  - get: flight-school
+    trigger: true
+  - task: tests
+    file: flight-school/ci/tasks/build.yml
+  - put: staging-app
+    params:
+      manifest: flight-school/manifest.yml
+
+</code></pre>
+
+<p>This pipeline has two resources and a single job. The resource <code>flight-school</code> is the <code>git</code> repo and the resource <code>staging-app</code> is the <code>cloud-foundry</code> space to stage the app.</p>
+
+<p>The single job in the pipeline <code>test-app</code> gets the source code from git on any commits to the repo, and triggers the task defined in the <code>build.yml</code>. Next, on completion of this task, it puts the output artifact in to the staging-app resource using the manifest file defined for <code>cf push</code></p>
+
+<p>Edit the manifest file to reflect your app name</p>
+
+<pre><code>name: &lt;student-id&gt;-flight-school
+memory: 128M
+random-route: true
+path: .
+
+</code></pre>
+
+<h3 id="step-3">Step 3</h3>
+
+<h5 id="set-the-pipeline-using-fly">Set the Pipeline using Fly</h5>
+
+<p>Now you have your pipeline defined, it is ready to be uploaded to the CI Server.</p>
+
+<pre><code>$fly -t lite set-pipeline -p flight-school -c ci/pipeline.yml -l ~/.concourse/flight-school-properties.yml
+</code></pre>
+
+<h3 id="step-4">Step 4</h3>
+
+<h5 id="trigger-the-pipeline-and-stage-the-app">Trigger the Pipeline and stage the app</h5>
+
+<p>Test the tasks manually before you run the whole Pipelines</p>
+
+<pre><code>fly -t lite execute -c ci/tasks/build.yml
+</code></pre>
+
+<pre><code>fly -t lite trigger-job --job flight-school/test-app
+</code></pre>
+
+<p><img src="/images/concourse-2.png" alt="Concourse CI" style="width: 100%;"/></p>
+
+<h2 id="part-2-running-a-real-world-pipeline">Part 2: Running a real world pipeline</h2>
+
+<h3 id="step-5">Step 5</h3>
+
+<h5 id="configure-a-multi-step-pipeline">Configure a multi step pipeline</h5>
+
+<ol>
+<li><p>Clone the git repo which has a sample app PCFDemo with a real world pipeline.</p>
+
+<pre><code>https://github.com/rjain-pivotal/PCF-demo
+</code></pre></li>
+
+<li><p>Make sure you have an S3 bucket configured to save your artifacts and the IAM user credentials to access the bucket.</p></li>
+
+<li><p>Configure the properties files and assign it to the pipeline</p>
+
+<p>Copy the pcfdemo-properties-sample.yml to your ~/.concourse/pcfdemo-properties.yml
+Change the cf properties, github properties and s3 properties.</p>
+
+<pre><code>github-uri: https://github.com/&lt;github-user&gt;/PCF-demo.git
+github-branch: master
+s3-access-key-id: SAMPLEDF99FSWEBF9DW9  # AWS or S3 compatible access key id
+s3-secret-access-key: sampleaxfdpiA98FG8u7ahd08Sdgf8AFG8gh8S0F  # AWS or S3 compatible secret access key
+s3-endpoint: s3.amazonaws.com
+s3-bucket-version: pcfdemo-releases
+s3-bucket-releases: pcfdemo-releases
+s3-bucket-release-candidates: pcfdemo-release-candidates
+maven-opts: # -Xms256m -Xmx512m
+maven-config: # -s path/to/settings.xml
+cf-api: https://api.local.micropcf.io
+cf-username: admin
+cf-password: admin
+cf-org: micropcf-org
+cf-space: micropcf-space
+cf-manifest-host: pcfdemo-ci
+</code></pre></li>
+
+<li><p>Set the pipeline</p>
+
+<pre><code>fly -t lite set-pipeline -p pcfdemo -c ci/pipeline.yml -l ~/.concourse/pcfdemo-properties.yml
+</code></pre></li>
+
+<li><p>Trigger the pipeline</p>
+
+<pre><code>fly -t lite trigger-job --job pcfdemo/unit-test
+</code></pre></li>
+</ol>
+
+<p><img src="/images/concourse-3.png" alt="Concourse CI" style="width: 100%;"/></p>
+</p>
+          <p>15 Mar 2016
+            
+              
+                <a href="http://loves.cfapps.io//tags/concourse/">#concourse</a>
+              
+                <a href="http://loves.cfapps.io//tags/cloudfoundry/">#cloudfoundry</a>
+              
+            
+          </p>
+          
+            
+<div id="disqus_thread"></div>
+<script>
+
+
+
+
+(function() { 
+var d = document, s = d.createElement('script');
+
+s.src = '//pivotal.disqus.com/embed.js';
+
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+          
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col s3 m1">
+      
+        <a class="btn-floating btn-large waves-effect waves-light" href="http://loves.cfapps.io/2016/03/15/lab-1-build-and-deploy-apps-on-pcf/"><i class="mdi-navigation-arrow-back"></i></a>
+      
+      </div>
+      <div class="col s6 m10 center">&nbsp</div>
+      <div class="col s3 m1">
+      
+        <a class="btn-floating btn-large waves-effect waves-light" href="http://loves.cfapps.io/2016/04/15/lab-5-spring-cloud-circuit-breaker/"><i class="mdi-navigation-arrow-forward"></i></a>
+      
+      </div>
+    </div>
+
+  </div>
+</div>
+
+  <footer class="page-footer">
+    <div class="footer-copyright">
+      <div class="container">
+      © Copyright 2016 Pivotal Software, Inc. All Rights Reserved. Sitemap
+      <div class="right">Design <a class="grey-text text-lighten-4" href="http://www.github.com/pivotal/">@Pivotal</a></div>
+      </div>
+    </div>
+  </footer>
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="http://loves.cfapps.io//js/materialize.min.js"></script>
+  <script src="http://loves.cfapps.io//js/init.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-75133856-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+
+  </body>
+</html>
+

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Concourse on Cloud Foundry Meeting</title>
+    <link>http://loves.cfapps.io/tags/concourse/</link>
+    <description>Recent content in Concourse on Cloud Foundry Meeting</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© Copyright 2016 Pivotal Software, Inc. All Rights Reserved. Sitemap</copyright>
+    <lastBuildDate>Tue, 15 Mar 2016 14:54:22 -0400</lastBuildDate>
+    <atom:link href="http://loves.cfapps.io/tags/concourse/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Lab 6: Build Pipelines using Concourse.ci</title>
+      <link>http://loves.cfapps.io/2016/03/15/lab-6-build-pipelines-using-concourse.ci/</link>
+      <pubDate>Tue, 15 Mar 2016 14:54:22 -0400</pubDate>
+      
+      <guid>http://loves.cfapps.io/2016/03/15/lab-6-build-pipelines-using-concourse.ci/</guid>
+      <description>
+
+&lt;h3 id=&#34;goal&#34;&gt;Goal&lt;/h3&gt;
+
+&lt;p&gt;In this workshop, you will learn how to Build Pipelines to for unit testing, staging and production deployment to Cloud Foundry using Concourse.ci&lt;/p&gt;
+
+&lt;h3 id=&#34;introduction&#34;&gt;Introduction&lt;/h3&gt;
+
+&lt;p&gt;Concourse&amp;rsquo;s end goal is to provide an expressive CI system with as few distinct moving parts as possible.&lt;/p&gt;
+
+&lt;p&gt;Concourse CI decouples your project from your CI&amp;rsquo;s details, and keeping all configuration in declarative files that can be checked into version control.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://loves.cfapps.io/images/concourse-1.png&#34; alt=&#34;Concourse CI&#34; style=&#34;width: 100%;&#34;/&gt;&lt;/p&gt;
+
+&lt;p&gt;Concourse limits itself to three core concepts: tasks, resources, and the jobs that compose them. Interesting features like timed triggers and synchronizing usage of external environments are modeled in terms of these, rather than as layers on top.&lt;/p&gt;
+
+&lt;p&gt;With these primitives you can model any pipeline, from simple (unit → integration → deploy → ship) to complex (testing on multiple infrastructures, fanning out and in, etc.).&lt;/p&gt;
+
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Java SDK 1.7+&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Pivotal CF Env or Pivotal Web Services Account.  Create a free trial account here &lt;a href=&#34;http://run.pivotal.io/&#34;&gt;Pivotal Web Services&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Vagrant (&lt;a href=&#34;https://vagrantup.com/&#34;&gt;https://vagrantup.com/&lt;/a&gt;) to run Concourse locally&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Fly cli. The fly tool is a command line interface to Concourse, it available when you bring up Concourse&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;steps&#34;&gt;Steps&lt;/h2&gt;
+
+&lt;p&gt;In this workshop we are going to follow these steps to use the circuit-breaker in a Cloud Native Spring Boot app on Cloud foundry using the Spring Cloud Circuit Breaker Service.&lt;/p&gt;
+
+&lt;p&gt;Learn how to&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- Start and Configure Concourse.CI server
+- Create a Pipeline
+- Trigger a Pipeline using Fly
+- Run a pipeline to test, stage and deploy on Cloud Foundry
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;part-1-building-simple-pipelines&#34;&gt;Part 1: Building simple Pipelines&lt;/h2&gt;
+
+&lt;h3 id=&#34;step-1&#34;&gt;Step 1&lt;/h3&gt;
+
+&lt;h5 id=&#34;configure-your-concourse-ci-server&#34;&gt;Configure your Concourse.CI server&lt;/h5&gt;
+
+&lt;p&gt;Download the Concourse CI server and boot up using vagrant. This step will take some time, you can do this prior to the start of the workshop presentation.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$mkdir ciworkshop &amp;amp;&amp;amp; cd ciworkshop // ci workshop working directory
+$vagrant init concourse/lite # creates ./Vagrantfile
+$vagrant up                  # downloads the box and spins up the VM
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The web server will be running at &lt;a href=&#34;http://192.168.100.4:8080&#34;&gt;http://192.168.100.4:8080&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Open up the Concourse UI web page, you don&amp;rsquo;t have any pipelines configured. But you can download the fly cli from here. At the right hand bottom, use the links to download the &lt;strong&gt;fly cli&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re on Linux or OS X, you will have to &lt;code&gt;chmod +x&lt;/code&gt; the downloaded binary and put it in your $PATH&lt;/p&gt;
+
+&lt;p&gt;Next, lets target and login to the Concourse server&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ fly -t lite login -c http://192.168.100.4:8080
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;step-2&#34;&gt;Step 2&lt;/h3&gt;
+
+&lt;h5 id=&#34;create-your-first-pipeline&#34;&gt;Create your first pipeline&lt;/h5&gt;
+
+&lt;p&gt;We have an existing project &lt;code&gt;flight-school&lt;/code&gt; in a git repo, which we can clone and use for our first pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$git clone https://github.com/rjain-pivotal/flight-school.git
+$cd flight-school\ci
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In the ci folder there is a properties file, flight-school-properties-sample.yml&lt;/p&gt;
+
+&lt;p&gt;This contains the cf and git specific configuration which is read by the pipeline.&lt;/p&gt;
+
+&lt;p&gt;Make a local copy of the flight-school-properties-sample.yml&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir ~/.concourse
+cp ci/flight-school-properties-sample.yml ~/.concourse/flight-school-properties.yml
+chmod 600 ~/.concourse/flight-school-properties.yml
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now edit the ~/.concourse/flight-school-properties.yml&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;github-uri: https://github.com/.../flight-school.git
+github-branch: master
+cf-api: https://api.local.micropcf.io
+cf-username: admin
+cf-password: admin
+cf-org: micropcf-org
+cf-space: micropcf-space
+cf-manifest-host: pcfdemo-ci
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Review your pipeline file in the ci folder\pipeline.yml&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;resources:
+- name: flight-school
+  type: git
+  source:
+      uri: {{github-uri}}
+      branch: {{github-branch}}
+- name: staging-app
+  type: cf
+  source:
+      api: {{cf-api}}
+      username: {{cf-username}}
+      password: {{cf-password}}
+      organization: {{cf-org}}
+      space: {{cf-space}}
+      skip_cert_check: true
+
+jobs:
+- name: test-app
+  plan:
+  - get: flight-school
+    trigger: true
+  - task: tests
+    file: flight-school/ci/tasks/build.yml
+  - put: staging-app
+    params:
+      manifest: flight-school/manifest.yml
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This pipeline has two resources and a single job. The resource &lt;code&gt;flight-school&lt;/code&gt; is the &lt;code&gt;git&lt;/code&gt; repo and the resource &lt;code&gt;staging-app&lt;/code&gt; is the &lt;code&gt;cloud-foundry&lt;/code&gt; space to stage the app.&lt;/p&gt;
+
+&lt;p&gt;The single job in the pipeline &lt;code&gt;test-app&lt;/code&gt; gets the source code from git on any commits to the repo, and triggers the task defined in the &lt;code&gt;build.yml&lt;/code&gt;. Next, on completion of this task, it puts the output artifact in to the staging-app resource using the manifest file defined for &lt;code&gt;cf push&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Edit the manifest file to reflect your app name&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;name: &amp;lt;student-id&amp;gt;-flight-school
+memory: 128M
+random-route: true
+path: .
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;step-3&#34;&gt;Step 3&lt;/h3&gt;
+
+&lt;h5 id=&#34;set-the-pipeline-using-fly&#34;&gt;Set the Pipeline using Fly&lt;/h5&gt;
+
+&lt;p&gt;Now you have your pipeline defined, it is ready to be uploaded to the CI Server.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$fly -t lite set-pipeline -p flight-school -c ci/pipeline.yml -l ~/.concourse/flight-school-properties.yml
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;step-4&#34;&gt;Step 4&lt;/h3&gt;
+
+&lt;h5 id=&#34;trigger-the-pipeline-and-stage-the-app&#34;&gt;Trigger the Pipeline and stage the app&lt;/h5&gt;
+
+&lt;p&gt;Test the tasks manually before you run the whole Pipelines&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;fly -t lite execute -c ci/tasks/build.yml
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;fly -t lite trigger-job --job flight-school/test-app
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://loves.cfapps.io/images/concourse-2.png&#34; alt=&#34;Concourse CI&#34; style=&#34;width: 100%;&#34;/&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;part-2-running-a-real-world-pipeline&#34;&gt;Part 2: Running a real world pipeline&lt;/h2&gt;
+
+&lt;h3 id=&#34;step-5&#34;&gt;Step 5&lt;/h3&gt;
+
+&lt;h5 id=&#34;configure-a-multi-step-pipeline&#34;&gt;Configure a multi step pipeline&lt;/h5&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Clone the git repo which has a sample app PCFDemo with a real world pipeline.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;https://github.com/rjain-pivotal/PCF-demo
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Make sure you have an S3 bucket configured to save your artifacts and the IAM user credentials to access the bucket.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Configure the properties files and assign it to the pipeline&lt;/p&gt;
+
+&lt;p&gt;Copy the pcfdemo-properties-sample.yml to your ~/.concourse/pcfdemo-properties.yml
+Change the cf properties, github properties and s3 properties.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;github-uri: https://github.com/&amp;lt;github-user&amp;gt;/PCF-demo.git
+github-branch: master
+s3-access-key-id: SAMPLEDF99FSWEBF9DW9  # AWS or S3 compatible access key id
+s3-secret-access-key: sampleaxfdpiA98FG8u7ahd08Sdgf8AFG8gh8S0F  # AWS or S3 compatible secret access key
+s3-endpoint: s3.amazonaws.com
+s3-bucket-version: pcfdemo-releases
+s3-bucket-releases: pcfdemo-releases
+s3-bucket-release-candidates: pcfdemo-release-candidates
+maven-opts: # -Xms256m -Xmx512m
+maven-config: # -s path/to/settings.xml
+cf-api: https://api.local.micropcf.io
+cf-username: admin
+cf-password: admin
+cf-org: micropcf-org
+cf-space: micropcf-space
+cf-manifest-host: pcfdemo-ci
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Set the pipeline&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;fly -t lite set-pipeline -p pcfdemo -c ci/pipeline.yml -l ~/.concourse/pcfdemo-properties.yml
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Trigger the pipeline&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;fly -t lite trigger-job --job pcfdemo/unit-test
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://loves.cfapps.io/images/concourse-3.png&#34; alt=&#34;Concourse CI&#34; style=&#34;width: 100%;&#34;/&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

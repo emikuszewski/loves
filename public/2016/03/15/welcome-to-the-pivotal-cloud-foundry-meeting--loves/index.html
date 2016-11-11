@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+  <title>Welcome to the Pivotal Cloud Foundry Meeting @ Loves</title>
+  <link href="http://loves.cfapps.io//css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="http://loves.cfapps.io//css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/default.min.css">
+  <style type="text/css">
+  
+    footer.page-footer{background-image: url(http://loves.cfapps.io//images/default.png);}
+  
+  </style>
+
+</head>
+<body>
+  <ul id="slide-out" class="side-nav">
+    <li><a href="http://loves.cfapps.io/"><i class="mdi-action-home left"></i>Home<i class="mdi-hardware-keyboard-arrow-right right"></i></a></li>
+    <li><a href="http://loves.cfapps.io//categories"><i class="mdi-action-perm-media left"></i>Categories<i class="mdi-hardware-keyboard-arrow-right right"></i></a></li>
+    <li><a href="http://loves.cfapps.io//tags"><i class="mdi-action-loyalty left"></i>Tags<i class="mdi-hardware-keyboard-arrow-right right"></i></a></li>
+  </ul>
+  <div id="index-banner" class="parallax-container">
+  <a data-activates="slide-out" class="btn-floating button-collapse" style="top: 5px; left: 5px;"><i class="mdi-navigation-menu"></i></a>
+
+    <div class="section no-pad-bot">
+      <div class="container">
+        <div class="row center">
+          
+          
+            <a href="http://www.loves.com/"><img src="http://loves.cfapps.io//images/loves.png" style="height:100px"></a>
+          
+          
+        </div>
+        
+        <h1 class="header center teal-text text-lighten-2">Cloud Foundry Meeting</h1>
+        <div class="row center">
+          <h5 class="header col s12 light">Pivotal Cloud Foundry</h5>
+        </div>
+        <div class="row center">
+
+        
+        
+        
+          <a href="https://twitter.com/pivotal"><img src="http://loves.cfapps.io//images/twitter-dreamstale71.png"></a>
+        
+        
+        
+          <a href="http://loves.cfapps.io//index.xml"><img src="http://loves.cfapps.io//images/feed-dreamstale27.png"></a>
+        </div>
+      </div>
+    </div>
+    <div class="parallax">
+    
+      <img src="http://loves.cfapps.io//images/default.png">
+    
+    </div>
+  </div>
+
+
+
+<div class="container">
+  <div class="section">
+
+    <div class="row">
+      <div class="col s12">
+        <div class="card-panel">
+          <h4>Welcome to the Pivotal Cloud Foundry Meeting @ Loves</h4>
+          <p>
+          
+            
+              <a href="http://loves.cfapps.io//categories/agenda/">agenda</a>
+            
+              <a href="http://loves.cfapps.io//categories/workshop/">workshop</a>
+            
+           
+          </p>
+          <p>
+
+<h5 id="location">Location</h5>
+
+<p>10601 North Pennsylvania Ave - The Village -
+Oklahoma City, OK 73120</p>
+
+<h5 id="date-and-time">Date and Time</h5>
+
+<p>Date: <strong>November 16, 2016</strong></p>
+
+<p>Time: <strong>2:00PM—5:00PM</strong></p>
+
+<p>Click to get the Agenda, Prerequisites and Setup for the workshop.</p>
+
+<h5 id="agenda">Agenda</h5>
+
+<pre><code>    Broad Agenda
+
+    2:00 - 3:00: Build Pipelines for continuous deployment, Bosh/Ops Manager walk through and discussion on CI/CD.
+
+    3:30 - 4:30: Lessons learned and Scoping for POC - Apps, Infrastructure vSphere, Sizing, Timelines and Project Plan
+
+    4:30 and beyond : Open discussion on various topics - Spring Cloud Services, Security, APM, K8, Docker
+                      Wrap Up, Q&amp;A, and Feedback
+</code></pre>
+
+<h5 id="prerequisites">Prerequisites</h5>
+
+<ol>
+<li><p>Java SDK 1.7+</p></li>
+
+<li><p>Git CLI from <a href="https://mac.github.com/">github.com</a></p></li>
+
+<li><p>Cloud Foundry CLI for <a href="https://github.com/cloudfoundry/cli/releases">Mac</a> or <a href="http://docs.cloudfoundry.org/devguide/installcf/install-go-cli.html#windows">Windows</a></p></li>
+
+<li><p>Curl from <a href="http://curl.haxx.se/">curl</a></p></li>
+
+<li><p>Use Workshop PCF Env or Pivotal Web Services Account.  Create a free trial account here <a href="http://run.pivotal.io/">Pivotal Web Services</a></p></li>
+
+<li><p>Maven for build (<a href="https://maven.apache.org/install.html">https://maven.apache.org/install.html</a>)</p></li>
+
+<li><p>Vagrant (In case you want to run Concourse CI/CD using Vagrant)</p></li>
+</ol>
+
+<h5 id="setup">Setup</h5>
+
+<ol>
+<li><p>Install the Prerequisites software (cf cli)</p></li>
+
+<li><p>Check if you are able to use the cf cli to connect to the PCF Workshop Env. Alternatively, you can create a PWS account and check the firewall/connectivity before the Workshop. For example:</p>
+
+<pre><code>  cf login -a https://api.run.pivotal.io --skip-ssl-validation
+</code></pre></li>
+
+<li><p>Check if you are able to connect to Git repo and download / clone the repo using CLI</p></li>
+
+<li><p>Login to the App Manager Console. For example:</p>
+
+<pre><code>https://api.run.pivotal.io
+</code></pre></li>
+
+<li><p>Note: Tiles preinstalled in the PCF Workshop environment which we will be using the workshop. You don&rsquo;t need any setup for these tiles.</p>
+
+<pre><code>  ER
+  Spring Cloud Services
+  RabbitMQ
+  MySQL
+  MongoDB
+  Neo4J
+  Redis
+</code></pre></li>
+</ol>
+
+<h5 id="speakers">Speakers</h5>
+
+<pre><code>Patrick Crocker, Senior Platform Architect
+Edward Mikuszewski, Platform Architect
+</code></pre>
+
+<h4 id="presentation">Presentation</h4>
+
+<iframe src="https://docs.google.com/presentation/d/1wNT7il4szv25Tl0KBG4SaetQkwKwyqk_rrQfskDSLgo/embed?start=false&amp;loop=false&amp;delayms=3000" frameborder="0" width="100%" height="500" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+
+
+<h4 id="videos">Videos</h4>
+
+
+<div style="position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/V75fE_dxuBQ" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen frameborder="0"></iframe>
+ </div>
+
+
+
+<div style="position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/7APZD0me1nU" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen frameborder="0"></iframe>
+ </div>
+
+</p>
+          <p>15 Mar 2016
+            
+              
+                <a href="http://loves.cfapps.io//tags/logistics/">#logistics</a>
+              
+                <a href="http://loves.cfapps.io//tags/speakers/">#speakers</a>
+              
+            
+          </p>
+          
+            
+<div id="disqus_thread"></div>
+<script>
+
+
+
+
+(function() { 
+var d = document, s = d.createElement('script');
+
+s.src = '//pivotal.disqus.com/embed.js';
+
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+          
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col s3 m1">
+      
+        <a class="btn-floating btn-large disabled"><i class="mdi-navigation-arrow-back"></i></a>
+      
+      </div>
+      <div class="col s6 m10 center">&nbsp</div>
+      <div class="col s3 m1">
+      
+        <a class="btn-floating btn-large waves-effect waves-light" href="http://loves.cfapps.io/2016/03/15/lab-1-build-and-deploy-apps-on-pcf/"><i class="mdi-navigation-arrow-forward"></i></a>
+      
+      </div>
+    </div>
+
+  </div>
+</div>
+
+  <footer class="page-footer">
+    <div class="footer-copyright">
+      <div class="container">
+      © Copyright 2016 Pivotal Software, Inc. All Rights Reserved. Sitemap
+      <div class="right">Design <a class="grey-text text-lighten-4" href="http://www.github.com/pivotal/">@Pivotal</a></div>
+      </div>
+    </div>
+  </footer>
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="http://loves.cfapps.io//js/materialize.min.js"></script>
+  <script src="http://loves.cfapps.io//js/init.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-75133856-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+
+  </body>
+</html>
+
